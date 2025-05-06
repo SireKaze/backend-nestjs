@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 import {
   Entity,
   BaseEntity,
@@ -6,6 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { ResetPassword } from './reset_password.entity';
 import { Kategori } from '../kategori/kategori.entity';
@@ -47,4 +51,16 @@ export class User extends BaseEntity {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+}
+
+@Entity('used_tokens')
+export class UsedToken {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  token: string;
+
+  @CreateDateColumn()
+  used_at: Date;
 }

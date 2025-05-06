@@ -1,19 +1,22 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer'; //import MailerService
-import { MailResetPasswordDto } from './mail.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
-  constructor(private mailService: MailerService) {}
+  constructor(private mailerService: MailerService) {}
 
-  async sendForgotPassword(payload: MailResetPasswordDto) {
-    await this.mailService.sendMail({
-      to: payload.email,
-      subject: 'Lupa Password', // subject pada email
-      template: './lupa_password',  // template yang digunakan adalah lupa_password, kita bisa memembuat template yang lain
+  async sendForgotPassword(email: string, name: string, userId: number, token: string) {
+    // Ubah URL ke frontend (port 3010)
+    const link = `http://localhost:3010/auth/reset-pw?user_id=${userId}&token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Lupa Password',
+      template: './lupa_password', // Pastikan template tersedia di direktori 'templates'
       context: {
-        link: payload.link,
-        name: payload.name,
+        name: name,
+        link: link, // Kirim link reset password ke template
       },
     });
   }

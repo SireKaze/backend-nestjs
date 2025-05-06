@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 import { Controller, Get , Post  , Put , Delete , Patch } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ok } from 'assert';

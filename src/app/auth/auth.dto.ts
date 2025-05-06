@@ -1,5 +1,11 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PartialType, PickType } from "@nestjs/mapped-types";
 import { IsEmail, IsInt, IsString, Length, MinLength } from "class-validator";
+import { CreateDateColumn } from "typeorm";
+import { Column } from "typeorm/decorator/columns/Column";
+import { PrimaryGeneratedColumn } from "typeorm/decorator/columns/PrimaryGeneratedColumn";
+import { Entity } from "typeorm/decorator/entity/Entity";
 
 
 export class UserDto {
@@ -41,3 +47,4 @@ export class ResetPasswordDto {
   new_password: string;
   token: string;
 }
+

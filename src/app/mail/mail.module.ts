@@ -1,29 +1,29 @@
+/* eslint-disable prettier/prettier */
+import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Global, Module } from '@nestjs/common';
-import { MailService } from './mail.service';
 import { join } from 'path';
+import { MailService } from './mail.service'; // Import MailService
+import * as dotenv from 'dotenv';
+dotenv.config(); // Load environment variables
 
-
-@Global()
 @Module({
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: process.env.MAIL_HOST || ' mail.smkmadinatulquran.sch.id', //sesuaikan konfigurasi 
-        port: Number (process.env.MAIL_PORT) || 465,
-        connectionTimeout : 10000,
-        secure: true,   
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
         auth: {
-          user: process.env.MAIL_USER || 'latihan-kirim-email@smkmadinatulquran.sch.id',  //sesuaikan user
-          pass: process.env.MAIL_PASS ||'SMKMQ2024', //sesuaikan password 
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_PASS,
         },
       },
       defaults: {
-        from: 'latihan-kirim-email@smkmadinatulquran.sch.id',
+        from: `"Zerllz" <${process.env.GMAIL_USER}>`,
       },
       template: {
-        dir: join(__dirname, 'templates'),  // template akan di ambil dari handlebar yang ada pada folder templates
+        dir: join(__dirname, 'templates'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
@@ -31,8 +31,7 @@ import { join } from 'path';
       },
     }),
   ],
-  providers: [MailService],
-  exports: [MailService], // 👈 export  mailService agar bisa digunakan di luar module mail
+  providers: [MailService], // Provide MailService
+  exports: [MailService], // Export MailService
 })
 export class MailModule {}
-

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ResponsePagination, ResponseSuccess } from "src/interface";
 
 class BaseResponse {

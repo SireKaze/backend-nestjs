@@ -1,17 +1,30 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { typeOrm } from 'src/config/typeorm.config';
+import { AuthController } from './auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './auth.entity';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtAccessTokenStrategy } from './jwtAccessToken.strategy';
-import { MailModule } from '../mail/mail.module';
 import { ResetPassword } from './reset_password.entity';
+import { MailModule } from '../mail/mail.module'; // Import MailModule
+import { UsedToken } from './auth.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([User, ResetPassword]),JwtModule.register({}) , MailModule],
+  imports: [
+    ConfigModule,
+    TypeOrmModule.forFeature([User, ResetPassword, UsedToken]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '60s' },
+      }),
+      inject: [ConfigService],
+    }),
+    MailModule, // Add MailModule to imports
+  ],
+  providers: [AuthService],
   controllers: [AuthController],
-  providers: [AuthService,JwtAccessTokenStrategy]
 })
 export class AuthModule {}

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { LoginDto, RegisterDto, ResetPasswordDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { JwtGuardRefreshToken } from './auth.guard';
@@ -26,19 +26,26 @@ export class AuthController {
     return this.authService.refreshToken(+id, token);
   }
 
-
-  @Post('lupa-password')
-  async forgotPassowrd(@Body('email') email: string) {
-    console.log('email', email);
-    return  this.authService.forgotPassword(email);
+  @Post("social-login")
+  async socialLogin(@Body() payload:any){
+    return this.authService.social(payload)
   }
 
-  @Post('reset-password/:user_id')  // url yang dibuat pada endpont harus sama dengan ketika kita membuat link pada service forgotPassword
-  async ResetPassword(
-    @Param('user_id') user_id: string,
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('reset-password/:user_id/:token')
+  async resetPassword(
+    @Param('user_id') userId: number,
+    @Param('token') token: string,
     @Body() payload: ResetPasswordDto,
-    @Body() token: string
   ) {
-    return this.authService.ResetPassword(+user_id, token, payload);
+    try {
+      return await this.authService.ResetPassword(userId, token, payload);
+    } catch (error) {
+      throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
